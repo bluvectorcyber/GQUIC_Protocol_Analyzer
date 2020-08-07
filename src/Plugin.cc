@@ -23,6 +23,6 @@ plugin::Configuration Plugin::Configure()
 	config.description = "Google QUIC (GQUIC) protocol analyzer for Q039-Q046";
 	config.version.major = 1;
 	config.version.minor = 1;
-	config.version.patch = 0;
+	config.version.patch = 1;
 	return config;
 	}
