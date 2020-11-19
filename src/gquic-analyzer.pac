@@ -111,7 +111,7 @@ function process_packet(pkt: GQUIC_Packet, is_orig: bool): bool
 				{
 				//Populate standard GQUIC packet characteristics
 				auto rv = new RecordVal(BifType::Record::GQUIC::PublicHeader);
-				rv->Assign(0, new Val(pkt_num, TYPE_COUNT));
+				rv->Assign(0, val_mgr->GetCount(pkt_num));
 
 				if ( ${pkt.reg_pkt.cid}->present_case_index() )
 					{
@@ -119,9 +119,9 @@ function process_packet(pkt: GQUIC_Packet, is_orig: bool): bool
 					auto ptr = reinterpret_cast<const char*>(bytes->data());
 					rv->Assign(1, new StringVal(bytes->size(), ptr));
 					}
-					rv->Assign(2, new Val(${pkt.flags.is_long}, TYPE_BOOL));
+					rv->Assign(2, val_mgr->GetBool(${pkt.flags.is_long}));
 				if ( ${pkt.reg_pkt}->version_case_index() )
-					rv->Assign(3, new Val(pkt_version, TYPE_COUNT));
+					rv->Assign(3, val_mgr->GetCount(pkt_version));
 
 				if ( ${pkt.flags.hello_length} == true )
 					{
@@ -183,7 +183,7 @@ function process_packet(pkt: GQUIC_Packet, is_orig: bool): bool
 				{
 				//Populate standard GQUIC packet characteristics
 				auto rv = new RecordVal(BifType::Record::GQUIC::PublicHeader);
-				rv->Assign(0, new Val(pkt_num, TYPE_COUNT));
+				rv->Assign(0, val_mgr->GetCount(pkt_num));
 
 				if ( ${pkt.old_pkt.cid}->present_case_index() )
 					{
@@ -191,9 +191,9 @@ function process_packet(pkt: GQUIC_Packet, is_orig: bool): bool
 					auto ptr = reinterpret_cast<const char*>(bytes->data());
 					rv->Assign(1, new StringVal(bytes->size(), ptr));
 					}
-				rv->Assign(2, new Val(${pkt.flags.have_version}, TYPE_BOOL));
+				rv->Assign(2, val_mgr->GetBool(${pkt.flags.have_version}));
 				if ( ${pkt.old_pkt}->version_case_index() )
-					rv->Assign(3, new Val(pkt_version, TYPE_COUNT));
+					rv->Assign(3, val_mgr->GetCount(pkt_version));
 
 				if ( ${pkt.flags.hello_length} == true )
 					{
@@ -230,10 +230,10 @@ function process_packet(pkt: GQUIC_Packet, is_orig: bool): bool
 		if ( ${pkt.search.build_hello.yes.tag_number} )
 			{
 			auto bytes = ${pkt.search.build_hello.yes.tag_number};
-			hi_1->Assign(0, new Val(bytes, TYPE_COUNT));
+			hi_1->Assign(0, val_mgr->GetCount(bytes));
 		    	hi_1->Assign(1, new StringVal(${pkt.search.build_hello.yes.other_tags.seek_tags}.length(), (const char*)${pkt.search.build_hello.yes.other_tags.seek_tags}.begin()));
 			auto bytes2 = ${pkt.search.build_hello.yes.p_tag_offset};
-			hi_1->Assign(2, new Val(bytes2, TYPE_COUNT));
+			hi_1->Assign(2, val_mgr->GetInt(bytes2));
 			}
 		if ( ${pkt.search.build_hello.yes.other_tags.sni_check} )
 			hi_1->Assign(3, new StringVal(${pkt.search.build_hello.yes.sni.collect}.length(), (const char*)${pkt.search.build_hello.yes.sni.collect}.begin()));
@@ -299,7 +299,7 @@ function process_packet(pkt: GQUIC_Packet, is_orig: bool): bool
 		%{
 		auto rej_1 = new RecordVal(BifType::Record::GQUIC::RejInfo);
 		if ( ${pkt.search.build_hello.rej.tag_number} )
-			rej_1->Assign(0, new Val(${pkt.search.build_hello.rej.tag_number}, TYPE_COUNT));
+			rej_1->Assign(0, val_mgr->GetCount(${pkt.search.build_hello.rej.tag_number}));
 		rej_1->Assign(1, new StringVal(${pkt.search.build_hello.rej.other_tags.seek_tags}.length(), (const char*)${pkt.search.build_hello.rej.other_tags.seek_tags}.begin()));
 		if ( ${pkt.search.build_hello.rej.other_tags.stk_check} )
 			rej_1->Assign(2, new StringVal(${pkt.search.build_hello.rej.stk.collect}.length(), (const char*)${pkt.search.build_hello.rej.stk.collect}.begin()));
@@ -335,7 +335,7 @@ function process_packet(pkt: GQUIC_Packet, is_orig: bool): bool
 			rej_1->Assign(17, new StringVal(${pkt.search.build_hello.rej.scfg.collect.obit.collect}.length(), (const char*)${pkt.search.build_hello.rej.scfg.collect.obit.collect}.begin()));
 		if ( ${pkt.search.build_hello.rej.scfg.collect.other_tags.expy_check} )
 			rej_1->Assign(18, new StringVal(${pkt.search.build_hello.rej.scfg.collect.expy.collect}.length(), (const char*)${pkt.search.build_hello.rej.scfg.collect.expy.collect}.begin()));
-		rej_1->Assign(19, new Val(${pkt.search.build_hello.rej.scfg.collect.tag_number}, TYPE_COUNT));
+		rej_1->Assign(19, val_mgr->GetCount(${pkt.search.build_hello.rej.scfg.collect.tag_number}));
 		BifEvent::generate_gquic_rej(bro_analyzer(), bro_analyzer()->Conn(), is_orig, rv, rej_1);
 		return true;
 		%}
